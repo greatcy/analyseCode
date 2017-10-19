@@ -1,0 +1,67 @@
+最近在调试ppsspp的时候遇到两个问题：
+1、是python运行失败：
+def get_processes(device):
+    
+"""Return a dict from process name to list of running PIDs on the device."""
+
+    
+# Some custom ROMs use busybox instead of toolbox for ps. Without -w,
+    
+# busybox truncates the output, and very long package names like
+    
+# com.exampleisverylongtoolongbyfar.plasma exceed the limit.
+    
+#
+    
+# Perform the check for this on the device to avoid an adb roundtrip
+    
+# Some devices might not have readlink or which, so we need to handle
+    
+# this as well.
+    
+#
+    
+# Gracefully handle [ or readlink being missing by always using `ps` if
+    
+# readlink is missing. (API 18 has [, but not readlink).
+
+    
+ps_script = """
+        
+if $(ls /system/bin/readlink >/dev/null 2>&1); then
+         
+ if [ $(readlink /system/bin/ps) == "toolbox" ]; 
+then
+            ps;
+          
+else
+            ps -w;
+          
+fi
+        
+else
+          
+ps;
+        
+fi
+    """
+    
+ps_script = " ".join([line.strip() for line in ps_script.splitlines()])
+
+    
+output, _ = device.shell([ps_script])
+    
+return parse_ps_output(output)
+
+在android-ndk-r14b\python-packages\gdbrunner下需要从设备的进程中获取当前调试进程，这段shell在华为手机上运行失败，
+因为手机上没有/system/bin/readlink，所以只要把这段代码改成直接执行ps即可；
+
+2、在调试ppsspp出现 ABI找不到，报错是因为
+$(call import-module,libzip)
+$(call import-module,native)
+$(call import-module,glslang-build)
+
+ifeq ($(ANDROID_NDK_PROFILER),1)
+  $(call import-module,android-ndk-profiler)
+endif
+这几段import没有声明ABI，这里debug的时候并不需要这几个库，屏蔽掉即可；
