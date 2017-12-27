@@ -1,0 +1,9 @@
+在ubuntu上使用 adb 命令出现权限问题:
+insufficient permissions for device
+
+解决方式:
+adb kill-server
+sudo adb start-server
+adb server is out of date. killing... * daemon started successfully *
+sudo adb devices
+ 
