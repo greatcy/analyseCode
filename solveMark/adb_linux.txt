@@ -1,4 +1,4 @@
-在ubuntu上使用 adb 命令出现权限问题:
+1.在ubuntu上使用 adb 命令出现权限问题:
 insufficient permissions for device
 
 解决方式:
@@ -7,3 +7,10 @@ sudo adb start-server
 adb server is out of date. killing... * daemon started successfully *
 sudo adb devices
  
+
+2.使用adb远程连接华为P9,若使用adb connect <ip>失败,尝试:
+    执行命令”adb tcpip 5555“后可能需要重新开启USB调试
+    首先保证USB可调试(在华为P9上,要在开发者选项里先打开仅充电模式下允许ADB调试，再打开USB调试才行)(这里应该没什么关系)
+    connect 之后就可以使用adb shell等命令直接连接上设备了.
+
+
