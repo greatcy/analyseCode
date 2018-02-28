@@ -12,5 +12,8 @@ sudo adb devices
     执行命令”adb tcpip 5555“后可能需要重新开启USB调试
     首先保证USB可调试(在华为P9上,要在开发者选项里先打开仅充电模式下允许ADB调试，再打开USB调试才行)(这里应该没什么关系)
     connect 之后就可以使用adb shell等命令直接连接上设备了.
-
+    
+3.截图命令:
+adb shell screencap -p /sdcard/1.png 
+adb pull /sdcard/1.png
 
